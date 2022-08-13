@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ui_test/page2.dart';
 import 'package:ui_test/router_animation.dart';
 
+import 'model/card_model.dart';
+
 class Page1 extends StatefulWidget {
   const Page1({Key? key}) : super(key: key);
 
@@ -13,6 +15,13 @@ class Page1 extends StatefulWidget {
 }
 
 class _Page1State extends State<Page1> {
+  List<String> region = ['Ini', 'Indonesia', 'Singapore', 'Japan', 'Indonesia1', 'Singapore1', 'Japan1', 'Indonesia2', 'Singapore2', 'Japan2'];
+  String selectedRegion = "Indonesia";
+  List<CardModel> cardList = [
+    CardModel(category: 'Panorama', title: 'Indonesia', image: 'https://images.pexels.com/photos/758742/pexels-photo-758742.jpeg?cs=srgb&dl=pexels-ahmad-syahrir-758742.jpg&fm=jpg'),
+    CardModel(category: 'Panorama', title: 'Bali', image: 'https://c4.wallpaperflare.com/wallpaper/179/915/685/photography-water-reflection-bali-wallpaper-preview.jpg'),
+    CardModel(category: 'Panorama', title: 'Bromo', image: 'https://images.unsplash.com/photo-1602154663343-89fe0bf541ab?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8bW91bnQlMjBicm9tb3xlbnwwfHwwfHw%3D&w=1000&q=80'),
+  ];
   final pc = PageController(
     initialPage: (99999 / 2).floor(),
     viewportFraction: 0.5,
@@ -74,32 +83,54 @@ class _Page1State extends State<Page1> {
                     ),
                   ),
                   const SizedBox(
-                    height: 40,
+                    height: 30,
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0),
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 6,
-                                width: 6,
-                                decoration: const BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                ),
+                  SizedBox(
+                    height: 50,
+                    child: ListView.builder(
+                      itemCount: region.length,
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final d = region[index];
+                        return InkWell(
+                          focusColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () {
+                            setState(() {
+                              selectedRegion = d;
+                            });
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 30.0, right: index == region.length - 1 ? 18 : 0),
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                maxWidth: 70,
+                                minWidth: 0,
                               ),
-                              Text(
-                                'Indonesia',
-                                style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 12, color: Colors.green),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 6,
+                                    width: 6,
+                                    decoration: BoxDecoration(
+                                      color: selectedRegion == d ? const Color(0xff67bfb2) : Colors.transparent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  Text(
+                                    d,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 12, color: selectedRegion == d ? const Color(0xff67bfb2) : Colors.black38),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                   SizedBox(
@@ -113,6 +144,7 @@ class _Page1State extends State<Page1> {
                       },
                       itemBuilder: (context, i) {
                         final getIndex = i % 3;
+                        final datas = cardList[getIndex];
 
                         return AnimatedScale(
                           scale: getIndex == indexActive ? 1 : 0.8,
@@ -120,10 +152,10 @@ class _Page1State extends State<Page1> {
                           curve: Curves.elasticOut,
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 20.0, top: 12),
-                            child: Material(
-                              borderRadius: const BorderRadius.all(Radius.circular(20)),
-                              color: Colors.white,
-                              elevation: 10,
+                            child: Container(
+                              decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)), color: Colors.white, boxShadow: [
+                                BoxShadow(color: Colors.black.withOpacity(.05), offset: const Offset(0, 2), blurRadius: 10),
+                              ]),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -141,17 +173,17 @@ class _Page1State extends State<Page1> {
                                             child: Container(
                                               width: double.infinity,
                                               height: 170,
-                                              decoration: const BoxDecoration(
-                                                boxShadow: [
+                                              decoration: BoxDecoration(
+                                                boxShadow: const [
                                                   BoxShadow(
                                                     color: Colors.black26,
                                                     blurRadius: 10,
                                                     offset: Offset(0, 8),
                                                   ),
                                                 ],
-                                                borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                borderRadius: const BorderRadius.all(Radius.circular(20)),
                                                 image: DecorationImage(
-                                                  image: NetworkImage('https://images.unsplash.com/photo-1542351567-cd7b06dc08d7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHx8&w=1000&q=80'),
+                                                  image: NetworkImage(datas.image),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -216,7 +248,7 @@ class _Page1State extends State<Page1> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                'Indonesia',
+                                                datas.title,
                                                 style: GoogleFonts.poppins(
                                                   fontWeight: FontWeight.w700,
                                                   fontSize: 14,
@@ -235,7 +267,7 @@ class _Page1State extends State<Page1> {
                                             ],
                                           ),
                                           Text(
-                                            'Hotels',
+                                            datas.category,
                                             style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w500,
                                               fontSize: 12,
@@ -268,7 +300,7 @@ class _Page1State extends State<Page1> {
                         ),
                         Text(
                           'View All',
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: Colors.green, fontSize: 12),
+                          style: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: const Color(0xff67bfb2), fontSize: 12),
                         ),
                       ],
                     ),
@@ -305,9 +337,9 @@ class _Page1State extends State<Page1> {
               padding: const EdgeInsets.all(12),
               child: Container(
                 width: MediaQuery.of(context).size.width - 24,
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
                 decoration: const BoxDecoration(
-                  color: Colors.green,
+                  color: Color(0xff67bfb2),
                   borderRadius: BorderRadius.all(
                     Radius.circular(100),
                   ),
@@ -403,7 +435,7 @@ Widget card(size) {
                   Radius.circular(12),
                 ),
                 image: DecorationImage(
-                  image: NetworkImage('https://cdn.pixabay.com/photo/2015/07/10/16/04/water-839590__340.jpg'),
+                  image: NetworkImage('https://images.pexels.com/photos/758742/pexels-photo-758742.jpeg?cs=srgb&dl=pexels-ahmad-syahrir-758742.jpg&fm=jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
