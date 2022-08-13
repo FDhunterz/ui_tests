@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import 'materialX/progress_bar.dart';
 
 class Page2 extends StatefulWidget {
   final String hero;
@@ -9,6 +13,20 @@ class Page2 extends StatefulWidget {
 }
 
 class _Page2State extends State<Page2> {
+  double progress = 0;
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(const Duration(milliseconds: 100), (t) {
+      if (progress == 100) {
+        progress = 0;
+      }
+      setState(() {
+        progress += 1;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +56,17 @@ class _Page2State extends State<Page2> {
               ),
             ),
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * .5,
+            child: MateialXLinearProgrss(
+              progress: progress,
+              height: 10,
+              color: Colors.green,
+            ),
+          )
         ],
       ),
     );
